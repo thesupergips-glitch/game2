@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Тайны Цирюльника - QR версия</title>
+    <style>
+        /* Ваши стили */
+        body { background: #1a1a2e; color: white; font-family: Georgia; }
+        .character-card { 
+            background: rgba(30,40,50,0.9); 
+            padding: 20px; 
+            margin: 20px; 
+            border-radius: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <div id="tw-story"></div>
+    
+    <script>
+        // Функция для получения параметров из URL
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split('&');
+            
+            for (let pair of pairs) {
+                const [key, value] = pair.split('=');
+                if (key && value) {
+                    params[key] = decodeURIComponent(value);
+                }
+            }
+            return params;
+        }
+        
+        // Получаем параметры
+        const urlParams = getUrlParams();
+        const characterType = urlParams.character || 'warrior';
+        
+        // Сохраняем в localStorage для SugarCube
+        localStorage.setItem('characterType', characterType);
+        localStorage.setItem('urlParams', JSON.stringify(urlParams));
+        
+        // Перенаправляем на основную игру
+        window.location.href = 'game.html';
+    </script>
+</body>
+</html>
