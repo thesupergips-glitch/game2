@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Тест Supabase</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест Supabase</h1>
+    
+    <div id="status">
+        <p class="loading">🔄 Проверка подключения...</p>
+    </div>
+    
+    <script>
+        // Ваши данные из Supabase Dashboard
+        const SUPABASE_URL = 'https://ваш-проект.supabase.co';
+        const SUPABASE_KEY = 'ваш_публичный_ключ';
+        
+        async function testSupabase() {
+            const status = document.getElementById('status');
+            
+            try {
+                // 1. Проверяем, загрузился ли Supabase SDK
+                if (typeof supabase === 'undefined') {
+                    status.innerHTML = '<p class="error">❌ Supabase SDK не загрузился</p>';
+                    return;
+                }
+                
+                status.innerHTML = '<p class="loading">✅ SDK загружен, создаю клиент...</p>';
+                
+                // 2. Создаем клиент
+                const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                status.innerHTML = '<p class="loading">✅ Клиент создан, проверяю подключение...</p>';
+                
+                // 3. Проверяем подключение (пробуем получить версию)
+                const { data, error } = await client.from('players').select('count').limit(1);
+                
+                if (error) {
+                    status.innerHTML = `<p class="error">❌ Ошибка: ${error.message}</p>`;
+                    console.error('Supabase ошибка:', error);
+                } else {
+                    status.innerHTML = '<p class="success">✅ Подключение к Supabase успешно!</p>';
+                    console.log('✅ Supabase подключен:', data);
+                }
+                
+            } catch (error) {
+                status.innerHTML = `<p class="error">❌ Ошибка: ${error.message}</p>`;
+                console.error('Общая ошибка:', error);
+            }
+        }
+        
+        // Ждем загрузки Supabase SDK
+        if (typeof supabase !== 'undefined') {
+            testSupabase();
+        } else {
+            document.getElementById('status').innerHTML = 
+                '<p class="loading">🔄 Ожидаю загрузку Supabase SDK...</p>';
+            
+            setTimeout(() => {
+                if (typeof supabase !== 'undefined') {
+                    testSupabase();
+                } else {
+                    document.getElementById('status').innerHTML = 
+                        '<p class="error">❌ Supabase SDK не загрузился за 5 секунд</p>';
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
